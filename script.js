@@ -89,43 +89,31 @@ function playMusic(index, pause = false) {
 
 /* ===================== DISPLAY ALBUMS ===================== */
 async function displayalbums() {
-  const res = await fetch("/songs/");
-  const html = await res.text();
+  const res = await fetch("/songs/albums.json");
+  const albums = await res.json();
 
-  const div = document.createElement("div");
-  div.innerHTML = html;
-
-  const anchors = Array.from(div.getElementsByTagName("a"));
   const cardcontainer = document.querySelector(".card-container");
   cardcontainer.innerHTML = "";
 
-  for (const a of anchors) {
-    const href = a.getAttribute("href");
-    if (!href.startsWith("/songs/")) continue;
-    if (href.includes(".")) continue;
-
-    let name = href.replace("/songs/", "").replace("/", "");
-
+  for (const folder of albums) {
     try {
-      const metaRes = await fetch(`/songs/${name}/info.json`);
-      console.log("metaRes:", metaRes);
-
+      const metaRes = await fetch(`/songs/${folder}/info.json`);
       if (!metaRes.ok) continue;
 
       const meta = await metaRes.json();
 
       cardcontainer.innerHTML += `
-        <div class="card" data-folder="${name}">
+        <div class="card" data-folder="${folder}">
           <div class="play">
-            <img src="./img/play.svg">
+            <img src="img/play.svg">
           </div>
-          <img src="./songs/${name}/cover.jpg">
+          <img src="/songs/${folder}/cover.jpg">
           <h2>${meta.title}</h2>
           <p>${meta.description}</p>
         </div>
       `;
     } catch (err) {
-      console.error("Metadata error for", name, err);
+      console.error("Album load failed:", folder);
     }
   }
 }
