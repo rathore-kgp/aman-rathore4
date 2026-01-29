@@ -27,7 +27,7 @@ function cleanSongName(path) {
 async function getSongs(folder) {
   const res = await fetch(`/songs/${folder}/`);
   const text = await res.text();
-
+  console.log(text);
   const div = document.createElement("div");
   div.innerHTML = text;
 
@@ -38,6 +38,10 @@ async function getSongs(folder) {
 
   currentIndex = 0;
 }
+
+// async function getSongs(folder) {
+
+// }
 
 /* ===================== RENDER PLAYLIST ===================== */
 function renderSongs() {
