@@ -97,19 +97,19 @@ async function displayalbums() {
 
   const anchors = Array.from(div.getElementsByTagName("a"));
   const cardcontainer = document.querySelector(".card-container");
+  cardcontainer.innerHTML = "";
 
   for (const a of anchors) {
     const href = a.getAttribute("href");
-    let name = a.textContent.trim();
+    if (!href.startsWith("/songs/")) continue;
+    if (href.includes(".")) continue;
 
-    if (!href || href === "../") continue;
-    if (name.includes(".")) continue;
-    if (!href.endsWith("/")) continue;
-
-    name = name.replace("/", "");
+    let name = href.replace("/songs/", "").replace("/", "");
 
     try {
       const metaRes = await fetch(`/songs/${name}/info.json`);
+      console.log("metaRes:", metaRes);
+
       if (!metaRes.ok) continue;
 
       const meta = await metaRes.json();
@@ -117,9 +117,9 @@ async function displayalbums() {
       cardcontainer.innerHTML += `
         <div class="card" data-folder="${name}">
           <div class="play">
-            <img src="img/play.svg">
+            <img src="./img/play.svg">
           </div>
-          <img  src="/songs/${name}/cover.jpg">
+          <img src="./songs/${name}/cover.jpg">
           <h2>${meta.title}</h2>
           <p>${meta.description}</p>
         </div>
